@@ -44,5 +44,7 @@ application {
 
 spotless {
     kotlin {
+        target("**/*.kt")
+        ktlint("1.1.0")
     }
 }

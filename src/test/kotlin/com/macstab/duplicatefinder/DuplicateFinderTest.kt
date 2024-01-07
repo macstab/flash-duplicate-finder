@@ -13,7 +13,6 @@ import org.junit.Before
 import org.junit.Test
 
 class DuplicateFinderTest {
-
     private lateinit var duplicateFinder: DuplicateFinder
     private lateinit var options: DuplicateOptions
     private lateinit var fileDuplicateFinder: FileDuplicateFinder

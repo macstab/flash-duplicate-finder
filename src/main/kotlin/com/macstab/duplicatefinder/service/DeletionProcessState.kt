@@ -7,7 +7,6 @@ import java.io.File
 import java.io.FileInputStream
 
 class DeletionProcessState(val options: DuplicateOptions) {
-
     internal val sizeFileMap = mutableMapOf<Long, Array<FileData>>()
     internal val checksumFileMap = mutableMapOf<String, Array<FileData>>()
     val filenameFileMap = mutableMapOf<String, FileData>()
@@ -19,26 +18,29 @@ class DeletionProcessState(val options: DuplicateOptions) {
     fun addNewFileToStates(cwdFile: File) {
         val fileName = cwdFile.absolutePath
         val fileSize = cwdFile.length()
-        val checkSum = getSha256(cwdFile);
-        val fileData = FileData(fileName, fileSize, checkSum);
+        val checkSum = getSha256(cwdFile)
+        val fileData = FileData(fileName, fileSize, checkSum)
 
         val sizeFileArray = sizeFileMap.getOrPut(fileSize) { emptyArray() }
         val checksumFileArray = checksumFileMap.getOrPut(checkSum) { emptyArray() }
 
         checksumFileArray
-                .filter { sizeFileArray.contains(it) }
-                .filter { it.equals(fileData) }
-                .forEach { addLink(fileData, it) }
+            .filter { sizeFileArray.contains(it) }
+            .filter { it.equals(fileData) }
+            .forEach { addLink(fileData, it) }
 
         sizeFileMap[fileSize] = sizeFileArray.plus(fileData)
         checksumFileMap[checkSum] = checksumFileArray.plus(fileData)
         filenameFileMap[fileName] = fileData
     }
 
-    private fun addLink(lhs: FileData, rhs: FileData) {
+    private fun addLink(
+        lhs: FileData,
+        rhs: FileData,
+    ) {
         VerboseHandler.printToConsole(
             "Adding duplicate for ${lhs.fileName} to ${rhs.fileName}",
-            options
+            options,
         )
 
         if (!lhs.duplicateFiles.contains(rhs)) lhs.duplicateFiles.add(rhs)

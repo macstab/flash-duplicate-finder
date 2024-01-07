@@ -3,12 +3,13 @@ package com.macstab.duplicatefinder.options
 import io.mockk.every
 import io.mockk.mockk
 import org.apache.commons.cli.CommandLine
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
 class OptionParserTest {
-
     private lateinit var optionParser: OptionParser
     private lateinit var commandLine: CommandLine
 

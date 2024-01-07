@@ -4,14 +4,13 @@ import com.macstab.duplicatefinder.config.FileData
 import com.macstab.duplicatefinder.options.DuplicateOptions
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
 class FileDuplicateReporterTest {
-
     private val deletionProcessState = mockk<DeletionProcessState>()
     private val options = mockk<DuplicateOptions>()
     private val fileDuplicateReporter = FileDuplicateReporter()
@@ -54,7 +53,11 @@ class FileDuplicateReporterTest {
     fun `should report duplicates for each file in filenameFileMap`() {
         val fileData1 = FileData("testFile1", 0, "checksum")
         val fileData2 = FileData("testFile2", 0, "checksum")
-        every { deletionProcessState.filenameFileMap } returns mutableMapOf("testFile1" to fileData1, "testFile2" to fileData2)
+        every { deletionProcessState.filenameFileMap } returns
+            mutableMapOf(
+                "testFile1" to fileData1,
+                "testFile2" to fileData2,
+            )
         every { options.suppressVerbose } returns false
         fileData1.duplicateFiles.add(FileData("testFile1-1", 0, "checksum"))
         fileData1.duplicateFiles.add(FileData("testFile1-2", 0, "checksum"))

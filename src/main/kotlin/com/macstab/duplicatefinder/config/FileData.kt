@@ -3,17 +3,16 @@ package com.macstab.duplicatefinder.config
 import org.apache.commons.io.file.PathUtils
 import java.nio.file.Paths
 
-
-data class FileData (var fileName: String, var fileLength: Long, var checkSum: String) {
+data class FileData(var fileName: String, var fileLength: Long, var checkSum: String) {
     var deleted = false
     val duplicateFiles: MutableList<FileData> = mutableListOf()
 
     override fun equals(other: Any?): Boolean {
-        if (other is FileData
-                &&
-            other.checkSum.equals(checkSum)
-                && other.fileLength.equals(fileLength)) {
-                    return PathUtils.fileContentEquals(Paths.get(other.fileName), Paths.get(fileName))
+        if (other is FileData &&
+            other.checkSum.equals(checkSum) &&
+            other.fileLength.equals(fileLength)
+        ) {
+            return PathUtils.fileContentEquals(Paths.get(other.fileName), Paths.get(fileName))
         }
         return false
     }
@@ -26,6 +25,10 @@ data class FileData (var fileName: String, var fileLength: Long, var checkSum: S
     }
 
     override fun hashCode(): Int {
-        return fileName.hashCode() * 31 + fileLength.hashCode() * 31 + checkSum.hashCode() * 31 + deleted.hashCode() * 31 + duplicateFiles.hashCode() * 31
+        return fileName.hashCode() * 31 +
+            fileLength.hashCode() * 31 +
+            checkSum.hashCode() * 31 +
+            deleted.hashCode() * 31 +
+            duplicateFiles.hashCode() * 31
     }
 }

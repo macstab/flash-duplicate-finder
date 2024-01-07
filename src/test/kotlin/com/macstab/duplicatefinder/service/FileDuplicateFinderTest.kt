@@ -3,8 +3,7 @@ package com.macstab.duplicatefinder.service
 import com.macstab.duplicatefinder.options.DuplicateOptions
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.File
 

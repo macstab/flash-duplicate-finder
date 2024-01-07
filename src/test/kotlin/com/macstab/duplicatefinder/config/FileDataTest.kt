@@ -1,11 +1,12 @@
 package com.macstab.duplicatefinder.config
 
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import kotlin.test.Test
 
 class FileDataTest {
-
     private lateinit var fileData: FileData
 
     @Before
