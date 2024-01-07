@@ -26,7 +26,7 @@ class OptionParser {
                     true,
                     "the path, where the backups of the deletes files should be stored, string, default is backupOfDeleted",
                 )
-                addOption("v", "suppressVerbose", true, "do not output the current state of work to the console")
+                addOption("v", "suppressVerbose", false, "do not output the current state of work to the console")
                 addOption(
                     "p",
                     "path",
