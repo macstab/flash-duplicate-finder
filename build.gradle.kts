@@ -1,8 +1,10 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm") version "1.8.10"
     id("com.diffplug.spotless") version "6.23.3"
-
+    id("org.graalvm.buildtools.native") version "0.9.8"
     // Apply the application plugin to add support for building a CLI application.
     application
 }
@@ -40,6 +42,23 @@ dependencies {
 application {
     // Define the main class for the application.
     mainClass.set("com.macstab.duplicatefinder.DuplicateFinderKt")
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 spotless {
