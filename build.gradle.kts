@@ -1,8 +1,7 @@
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.3.72"
-
-    id("com.diffplug.spotless") version "5.8.2"
+    id("org.jetbrains.kotlin.jvm") version "1.8.10"
+    id("com.diffplug.spotless") version "6.23.3"
 
     // Apply the application plugin to add support for building a CLI application.
     application
@@ -11,8 +10,11 @@ plugins {
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    mavenCentral()
 }
+
+group = "com.macstab.tools"
+project.properties["version"]?.toString() ?: "0.0.1-SNAPSHOT"
 
 dependencies {
     // Align versions of all Kotlin components
@@ -30,9 +32,17 @@ dependencies {
 
     // Use the Kotlin JUnit integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+    testImplementation("io.mockk:mockk:1.13.8")
+//    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
+//    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.1")
 }
 
 application {
     // Define the main class for the application.
-    mainClassName = "de.macstab.duplicatefinder.DuplicateFinderKt"
+    mainClass.set("com.macstab.duplicatefinder.DuplicateFinderKt")
+}
+
+spotless {
+    kotlin {
+    }
 }

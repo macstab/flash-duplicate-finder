@@ -1,6 +1,6 @@
-package de.macstab.duplicatefinder.service
+package com.macstab.duplicatefinder.service
 
-import de.macstab.duplicatefinder.options.DuplicateOptions
+import com.macstab.duplicatefinder.options.DuplicateOptions
 
 class VerboseHandler {
     companion object {
