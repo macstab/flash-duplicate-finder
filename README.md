@@ -8,9 +8,32 @@ The application is built using Kotlin, a modern programming language that ensure
 
 In the following sections, we will cover the installation process, starting the application, a detailed description of all available command-line switches and arguments, practical usage examples, and troubleshooting tips.
 
+The application is released as:
+- gradle project
+- Docker Image
+  - based on Java 19
+  - Multi-Architecture Native Docker Image (amd64, arm64)
+  - Arm64 Native Docker Image
+  - Amd64 Native Docker Image
+
+---
+
+## Use of docker container
+
+### Java Image
+
+
+
+### Multi-Architecture Native Docker Image
+
+### Arm64 Native Docker Image
+
+### Amd64 Native Docker Image
+
 ---
 
 ## Installation and Starting the Application
+
 
 ### Installation
 

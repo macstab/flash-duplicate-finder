@@ -1,6 +1,9 @@
 import com.google.cloud.tools.jib.api.Containerizer
 import com.google.cloud.tools.jib.api.Jib
 import com.google.cloud.tools.jib.api.RegistryImage
+import com.google.cloud.tools.jib.api.buildplan.AbsoluteUnixPath
+import com.google.cloud.tools.jib.api.buildplan.FileEntriesLayer
+import com.google.cloud.tools.jib.api.buildplan.FilePermissions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.nio.file.Paths
 
@@ -82,15 +85,19 @@ jib {
 }
 
 fun determineBaseImage(): String {
-    val osArch = System.getProperty("os.arch")
+    val osArch = determineTagSuffix()
     return when {
         "amd64" in osArch || "x86_64" in osArch -> "frolvlad/alpine-glibc"
-        "arm" in osArch || "aarch64" in osArch -> "arm64v8/alpine"
+        "arm64" in osArch || "aarch64" in osArch -> "arm64v8/alpine"
         else -> "docker.io/default/base-image"
     }
 }
 
 fun determineTagSuffix(): String {
+    var envArchitecture = System.getenv("ARCHITECTURE")
+    if (envArchitecture != null && envArchitecture.isNotEmpty()) {
+        return envArchitecture
+    }
     val osArch = System.getProperty("os.arch")
     return when {
         "amd64" in osArch || "x86_64" in osArch -> "amd64"
@@ -115,10 +122,14 @@ tasks.register("jibNativeImage") {
         println("Using base image: $baseImage")
         println("Pushing to image: $targetImage")
 
-        val build = Jib.from(baseImage)
-            .setEntrypoint("/app/FlashDuplicateFinder/FlashDuplicateFinder")
 
-            .addLayer(listOf(nativeImagePath), "/app/FlashDuplicateFinder")
+        val nativeImageEntry = FileEntriesLayer.builder()
+            .addEntry(nativeImagePath, AbsoluteUnixPath.get("/app/FlashDuplicateFinder"), FilePermissions.fromOctalString("755"))
+            .build()
+
+        val build = Jib.from(baseImage)
+            .setEntrypoint("/app/FlashDuplicateFinder")
+            .addFileEntriesLayer(nativeImageEntry)
 
         val registryImage = Containerizer.to(RegistryImage.named(targetImage).addCredential(System.getenv("DOCKER_USERNAME"), System.getenv("DOCKER_PASSWORD")))
         build.containerize(registryImage)
