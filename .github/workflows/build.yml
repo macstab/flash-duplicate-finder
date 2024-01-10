@@ -12,9 +12,9 @@ jobs:
       matrix:
         include:
           - arch: amd64
-            graalvm-container: docker pull ghcr.io/graalvm/graalvm-ce:22.3.3 # Example image
+            graalvm-container: ghcr.io/graalvm/graalvm-ce:22.3.3
           - arch: arm64
-            graalvm-container: docker pull ghcr.io/graalvm/graalvm-ce:22.3.3
+            graalvm-container: ghcr.io/graalvm/graalvm-ce:22.3.3
     container:
       image: ${{ matrix.graalvm-container }}
     steps:
