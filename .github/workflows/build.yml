@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: alpine-latest
     strategy:
       matrix:
         include:
@@ -29,6 +29,6 @@ jobs:
           PLATFORM: ${{ matrix.platform }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          ARCHITECTURE: ${{ matrix.platform == 'amd64' && 'amd64' || 'arm64' }}
+          ARCHITECTURE: ${{ matrix.arch }}
         run: |
           ./gradlew jibNativeImage
