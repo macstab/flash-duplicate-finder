@@ -29,6 +29,6 @@ jobs:
           PLATFORM: ${{ matrix.platform }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          ARCHITECTURE: ${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}
+          ARCHITECTURE: ${{ matrix.platform == 'amd64' && 'amd64' || 'arm64' }}
         run: |
           ./gradlew jibNativeImage
