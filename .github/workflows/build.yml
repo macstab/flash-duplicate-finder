@@ -1,0 +1,34 @@
+name: Flash Duplicate Finder - Multi-Architecture Build with Jib and GraalVM
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            graalvm-container: docker pull ghcr.io/graalvm/graalvm-ce:22.3.3 # Example image
+          - arch: arm64
+            graalvm-container: docker pull ghcr.io/graalvm/graalvm-ce:22.3.3
+    container:
+      image: ${{ matrix.graalvm-container }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check the project
+        run: ./gradlew check
+
+      - name: Build and push with Jib
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          ARCHITECTURE: ${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}
+        run: |
+          ./gradlew jibNativeImage
