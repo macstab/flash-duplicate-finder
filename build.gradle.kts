@@ -4,8 +4,14 @@ import com.google.cloud.tools.jib.api.RegistryImage
 import com.google.cloud.tools.jib.api.buildplan.AbsoluteUnixPath
 import com.google.cloud.tools.jib.api.buildplan.FileEntriesLayer
 import com.google.cloud.tools.jib.api.buildplan.FilePermissions
+import org.jetbrains.kotlin.cli.jvm.main
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.nio.file.Paths
+
+// The pipeline supports the execution of the app, regular JVM build and native image build for ARM64 and AMD64
+// further we provide the option via the TAG env var to define the current release tag for a container image release
+
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
@@ -24,7 +30,7 @@ repositories {
 }
 
 group = "com.macstab.tools"
-project.properties["version"]?.toString() ?: "0.0.1-SNAPSHOT"
+val version = project.properties["version"]?.toString() ?: "0.0.1"
 
 dependencies {
     // Align versions of all Kotlin components
@@ -84,11 +90,20 @@ jib {
     }
 }
 
+graalvmNative {
+    binaries.all {
+        buildArgs.add("--static")
+    }
+}
+
+/**
+ * This should provide the architecture of the base image to use ( even if currently we use a multi arch base image )
+ */
 fun determineBaseImage(): String {
     val osArch = determineTagSuffix()
     return when {
-        "amd64" in osArch || "x86_64" in osArch -> "frolvlad/alpine-glibc"
-        "arm64" in osArch || "aarch64" in osArch -> "arm64v8/alpine"
+        "amd64" in osArch || "x86_64" in osArch -> "oraclelinux:8-slim"
+        "arm64" in osArch || "aarch64" in osArch -> "oraclelinux:8-slim"
         else -> "docker.io/default/base-image"
     }
 }
@@ -113,11 +128,15 @@ tasks.named("nativeCompile") {
 tasks.register("jibNativeImage") {
     dependsOn("nativeCompile")
     doLast {
-        val version = project.properties["version"]?.toString() ?: "0.0.1"
+
+        var tag = System.getenv()["TAG"]
+        if (tag == null || tag.isEmpty()) {
+            tag = "latest"
+        }
 
         val baseImage = determineBaseImage()
-        val targetImage = "docker.io/macstab/flash-duplicate-finder-native:latest-" + determineTagSuffix()
-        val nativeImagePath = Paths.get(buildDir.absolutePath, "native/nativeCompile/FlashDuplicateFinder")
+        val targetImage = "docker.io/macstab/flash-duplicate-finder-native:${tag}-" + determineTagSuffix()
+        val nativeImagePath = Paths.get(layout.buildDirectory.get().asFile.absolutePath, "native/nativeCompile/FlashDuplicateFinder")
 
         println("Using base image: $baseImage")
         println("Pushing to image: $targetImage")
