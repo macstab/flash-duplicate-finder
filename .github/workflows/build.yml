@@ -3,7 +3,8 @@ name: Flash Duplicate Finder - Multi-Architecture Build with Jib and GraalVM
 on:
   push:
     branches:
-      - main  # Trigger on push to main branch
+      - main
+      - develop
 
 jobs:
   build:
@@ -30,5 +31,24 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
           ARCHITECTURE: ${{ matrix.arch }}
+          TAG: ${{ github.ref_name }}
         run: |
           ./gradlew jibNativeImage
+
+      - name: Release with semantic release
+        id: semantic_release
+        uses: docker://macstab/semantic-release-maven-gradle-nodejs-python-git-jq:v1.6.3
+        if: github.ref == 'refs/heads/main'
+        with:
+          entrypoint: /bin/sh
+          workdir: /home/runner/work/${{ github.repository }}/${{ github.repository }}
+          branches: 'main'
+          args: -c "pwd && cp /configs/$CONFIG_FILE .releaserc && git config --global --add safe.directory /github/workspace && npx semantic-release --branches $RELEASE_BRANCH"
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_ENV: production
+          GH_URL: https://github.com/${{ github.repository }}.git
+          RELEASE_BRANCH: main
+          CONFIG_FILE: .releaserc-gradle.json
+          DEBUG: semantic-release:*
