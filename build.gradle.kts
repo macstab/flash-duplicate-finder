@@ -29,7 +29,7 @@ repositories {
     mavenCentral()
 }
 
-group = "com.macstab.tools"
+val group = "com.macstab.tools"
 val version = project.properties["version"]?.toString() ?: "0.0.1"
 
 dependencies {
@@ -81,12 +81,18 @@ spotless {
 }
 
 jib {
+    var tag : String? = System.getenv()["TAG"]
+    if (tag.isNullOrEmpty()) {
+        tag = "latest"
+    }
+
     from {
         image = "eclipse-temurin:latest" // or any other base image you prefer
     }
     to {
+
         image = "macstab/flash-duplicate-finder" // your desired image name
-        tags = setOf("latest") // optional
+        tags = setOf(tag) // optional
     }
 }
 
@@ -109,7 +115,7 @@ fun determineBaseImage(): String {
 }
 
 fun determineTagSuffix(): String {
-    var envArchitecture = System.getenv("ARCHITECTURE")
+    val envArchitecture = System.getenv("ARCHITECTURE")
     if (envArchitecture != null && envArchitecture.isNotEmpty()) {
         return envArchitecture
     }
@@ -129,8 +135,8 @@ tasks.register("jibNativeImage") {
     dependsOn("nativeCompile")
     doLast {
 
-        var tag = System.getenv()["TAG"]
-        if (tag == null || tag.isEmpty()) {
+        var tag : String? = System.getenv()["TAG"]
+        if (tag.isNullOrEmpty()) {
             tag = "latest"
         }
 
