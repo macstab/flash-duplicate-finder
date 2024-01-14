@@ -17,15 +17,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up GraalVM
-        uses: DeLaGuardo/setup-graalvm@4.0
         with:
-          graalvm-version: '22.3.3'
-          java: 'java17'
+          persist-credentials: false
 
       - name: Check the project
-        run: ./gradlew check
+        uses: docker://ghcr.io/graalvm/graalvm-ce:22.3.3
+        with:
+          entrypoint: /bin/sh
+          args: -c "./gradlew check --console=plain"
 
       - name: Build and push with Jib
         env:
@@ -34,7 +33,10 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
           ARCHITECTURE: ${{ matrix.arch }}
           TAG: ${{ github.ref_name }}
-        run: ./gradlew jibNativeImage
+        uses: docker://ghcr.io/graalvm/graalvm-ce:22.3.3
+        with:
+          entrypoint: /bin/sh
+          args: -c "./gradlew jibNativeImage --console=plain"
 
       - name: Release with semantic release
         id: semantic_release
