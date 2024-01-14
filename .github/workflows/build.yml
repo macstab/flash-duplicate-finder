@@ -17,23 +17,28 @@ jobs:
           - arch: arm64
             graalvm-container: ghcr.io/graalvm/graalvm-ce:22.3.3
     container:
-      image: ${{ matrix.graalvm-container }}
+      image: macstab/semantic-release-maven-gradle-nodejs-python-git-jq:v1.6.3
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Check the project
-        run: ./gradlew check
+        uses: docker://${{ matrix.graalvm-container }}
+        with:
+          entrypoint: /bin/sh
+          args: -c "./gradlew check"
 
       - name: Build and push with Jib
+        uses: docker://${{ matrix.graalvm-container }}
         env:
           PLATFORM: ${{ matrix.platform }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
           ARCHITECTURE: ${{ matrix.arch }}
           TAG: ${{ github.ref_name }}
-        run: |
-          ./gradlew jibNativeImage
+        with:
+          entrypoint: /bin/sh
+          args: -c "./gradlew jibNativeImage"
 
       - name: Release with semantic release
         id: semantic_release
