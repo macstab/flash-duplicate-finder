@@ -40,7 +40,7 @@ jobs:
 
       - name: Release with semantic release
         id: semantic_release
-        uses: docker://macstab/semantic-release-maven-gradle-nodejs-python-git-jq:v1.6.3
+        uses: docker://macstab/semantic-release-maven-gradle-nodejs-python-git-jq:v1.13.2
         if: github.ref == 'refs/heads/main'
         with:
           entrypoint: /bin/sh
