@@ -11,6 +11,11 @@ on:
     branches:
       - main
 
+# not in parallel as of the release and merge topic
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -50,10 +55,11 @@ jobs:
           entrypoint: /bin/sh
           args: -c "./gradlew check --console=plain"
 
+      # execute on amd64 runs only.
       - name: Release with semantic release
         id: semantic_release
         uses: docker://macstab/semantic-release-maven-gradle-nodejs-python-git-jq:1.1.2
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && matrix.platform == "amd64"
         with:
           entrypoint: /bin/sh
           workdir: /home/runner/work/${{ github.repository }}/${{ github.repository }}
@@ -68,8 +74,9 @@ jobs:
           CONFIG_FILE: .releaserc-gradle.json
           DEBUG: semantic-release:*
 
+      # merge back on amd64 only!
       - name: Merge main -> develop
-        if: ${{ steps.check_commit.outputs.skip == 'false' && !startsWith(github.ref, 'refs/tags/') && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+        if: ${{ steps.check_commit.outputs.skip == 'false' && !startsWith(github.ref, 'refs/tags/') && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && matrix.platform == "amd64" }}
         uses: docker://macstab/semantic-release-maven-gradle-nodejs-python-git-jq:1.1.2
         with:
           entrypoint: /bin/sh
