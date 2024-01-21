@@ -5,6 +5,11 @@ on:
     branches:
       - main
       - develop
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -20,27 +25,34 @@ jobs:
         with:
           persist-credentials: false
 
+      # Step 2: Check commit message
+      # Set switch if we need to skip some parts of the pipeline ( no pull requests and no tags! )
+      - name: Check commit message
+        if: ${{ !startsWith(github.ref, 'refs/tags/') && github.event_name != 'pull_request' }}
+        id: check_commit
+        run: |
+          if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+          git pull
+          fi
+          commit_message=$(git log --format=%B -n 1 ${{ github.event.after }})
+          if [[ "$commit_message" == "chore(release):"* ]]; then
+            echo "Commit message is a release commit. Skipping build."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "Commit message is not a release commit. Proceeding with build."
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      # test the project including tests and codestyle
       - name: Check the project
         uses: docker://ghcr.io/graalvm/graalvm-ce:22.3.3
         with:
           entrypoint: /bin/sh
           args: -c "./gradlew check --console=plain"
 
-      - name: Build and push with Jib
-        env:
-          PLATFORM: ${{ matrix.platform }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          ARCHITECTURE: ${{ matrix.arch }}
-          TAG: ${{ github.ref_name }}
-        uses: docker://ghcr.io/graalvm/graalvm-ce:22.3.3
-        with:
-          entrypoint: /bin/sh
-          args: -c "./gradlew jibNativeImage --console=plain"
-
       - name: Release with semantic release
         id: semantic_release
-        uses: docker://macstab/semantic-release-maven-gradle-nodejs-python-git-jq:v1.6.3
+        uses: docker://macstab/semantic-release-maven-gradle-nodejs-python-git-jq:1.1.2
         if: github.ref == 'refs/heads/main'
         with:
           entrypoint: /bin/sh
@@ -55,3 +67,50 @@ jobs:
           RELEASE_BRANCH: main
           CONFIG_FILE: .releaserc-gradle.json
           DEBUG: semantic-release:*
+
+      - name: Merge main -> develop
+        if: ${{ steps.check_commit.outputs.skip == 'false' && !startsWith(github.ref, 'refs/tags/') && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+        uses: docker://macstab/semantic-release-maven-gradle-nodejs-python-git-jq:1.1.2
+        with:
+          entrypoint: /bin/sh
+          workdir: /home/runner/work/${{ github.repository }}/${{ github.repository }}
+          args: "-c \"set -x && TAG_NAME=${GITHUB_REF#refs/tags/} && echo Release is $TAG_NAME && git config --global --add safe.directory /github/workspace && git config --global user.email '${{ secrets.BOT_USER_EMAIL }}' && git config --global user.name '${{ secrets.BOT_USER_NAME }}' && git fetch -a origin && git fetch origin ${INPUT_FROM_BRANCH} && git checkout ${INPUT_FROM_BRANCH} && git fetch origin ${INPUT_TARGET_BRANCH} && git checkout ${INPUT_TARGET_BRANCH} && git pull && COMMIT_HASH=$(git rev-parse ${TAG_NAME}) && git cherry-pick -Xtheirs $COMMIT_HASH --allow-empty && git push\""
+        env:
+          INPUT_FROM_BRANCH: 'main'
+          INPUT_TARGET_BRANCH: 'develop'
+
+      - name: Get latest release
+        if: steps.check_commit.outputs.skip == 'false' && github.ref == 'refs/heads/main'
+        id: latest_release
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/${{ github.repository }}/releases/latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        # build all but main
+      - name: Build and push with Jib as development
+        if: steps.check_commit.outputs.skip == 'false' && github.ref != 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          ARCHITECTURE: ${{ matrix.arch }}
+          TAG: ${{ github.ref_name }}
+        uses: docker://ghcr.io/graalvm/graalvm-ce:22.3.3
+        with:
+          entrypoint: /bin/sh
+          args: -c "./gradlew jibNativeImage --console=plain"
+
+      - name: Build and push with Jib as development
+        if: steps.check_commit.outputs.skip == 'false' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          ARCHITECTURE: ${{ matrix.arch }}
+        uses: docker://ghcr.io/graalvm/graalvm-ce:22.3.3
+        with:
+          entrypoint: /bin/sh
+          args: -c "export TAG=${{ fromJson(steps.latest_release.outputs.data).tag_name }} && ./gradlew jibNativeImage --console=plain"
+
