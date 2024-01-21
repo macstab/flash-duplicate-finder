@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/macstab/flash-duplicate-finder/compare/v1.0.0...1.1.0) (2024-01-21)
+
+
+### Features
+
+* **build:** improved release pipeline with correct tag evaluation. ([99b4cce](https://github.com/macstab/flash-duplicate-finder/commit/99b4ccecd959cf1ce6616d43296fced32db8592b))
+
 # 1.0.0 (2024-01-15)
 
 
