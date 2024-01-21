@@ -16,6 +16,7 @@ The application is released as:
   - Arm64 Native Docker Image
   - Amd64 Native Docker Image
 
+We use semantic release for the versioning of the application. The versioning is based on the commit messages. The commit messages are used to determine the next version number, and to generate release notes. The release notes are used to generate the changelog.
 ---
 
 ## Use of docker container
