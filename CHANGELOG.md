@@ -1,3 +1,15 @@
+## [1.2.1](https://github.com/macstab/flash-duplicate-finder/compare/1.2.0...1.2.1) (2024-01-21)
+
+## [1.2.1](https://github.com/macstab/flash-duplicate-finder/compare/1.2.0...1.2.1) (2024-01-21)
+
+## [1.2.1](https://github.com/macstab/flash-duplicate-finder/compare/1.2.0...1.2.1) (2024-01-21)
+
+## [1.2.1](https://github.com/macstab/flash-duplicate-finder/compare/1.2.0...1.2.1) (2024-01-21)
+
+## [1.2.1](https://github.com/macstab/flash-duplicate-finder/compare/1.2.0...1.2.1) (2024-01-21)
+
+## [1.2.1](https://github.com/macstab/flash-duplicate-finder/compare/1.2.0...1.2.1) (2024-01-21)
+
 # [1.2.0](https://github.com/macstab/flash-duplicate-finder/compare/1.1.0...1.2.0) (2024-01-21)
 
 
