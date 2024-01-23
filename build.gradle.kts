@@ -41,7 +41,7 @@ dependencies {
 
     api( "commons-io:commons-io:2.8.0")
     api( "commons-cli:commons-cli:1.4")
-    api( "commons-codec:commons-codec:1.15")
+    api( "commons-codec:commons-codec:1.16.0")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
