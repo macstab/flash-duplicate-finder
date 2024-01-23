@@ -1,3 +1,13 @@
+## [1.2.4](https://github.com/macstab/flash-duplicate-finder/compare/1.2.3...1.2.4) (2024-01-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency commons-cli:commons-cli to v1.6.0 ([fe68da2](https://github.com/macstab/flash-duplicate-finder/commit/fe68da27a5e5485a544cd58b259838015174b967))
+* **deps:** update dependency commons-codec:commons-codec to v1.16.0 ([d7a4505](https://github.com/macstab/flash-duplicate-finder/commit/d7a450583f1ea6a35f6ba0c87e0c9281a4b1b792))
+* **deps:** update dependency commons-io:commons-io to v2.15.1 ([0f49bc7](https://github.com/macstab/flash-duplicate-finder/commit/0f49bc7e245aa14c028c6f42cf6e6b26f47c8530))
+* **deps:** update dependency io.mockk:mockk to v1.13.9 ([05debd8](https://github.com/macstab/flash-duplicate-finder/commit/05debd87a2a46e47f738b4c9f167474126941f15))
+
 ## [1.2.3](https://github.com/macstab/flash-duplicate-finder/compare/1.2.2...1.2.3) (2024-01-23)
 
 ## [1.2.2](https://github.com/macstab/flash-duplicate-finder/compare/1.2.1...1.2.2) (2024-01-21)
