@@ -17,7 +17,7 @@ plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm") version "1.8.10"
     id("com.diffplug.spotless") version "6.25.0"
-    id("org.graalvm.buildtools.native") version "0.9.8"
+    id("org.graalvm.buildtools.native") version "0.9.28"
     id("com.google.cloud.tools.jib") version "3.4.0"
     // Apply the application plugin to add support for building a CLI application.
     application
