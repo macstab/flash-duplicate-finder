@@ -40,7 +40,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     api( "commons-io:commons-io:2.15.1")
-    api( "commons-cli:commons-cli:1.6.0")
+    api( "commons-cli:commons-cli:1.9.0")
     api( "commons-codec:commons-codec:1.16.0")
 
     // Use the Kotlin test library.
