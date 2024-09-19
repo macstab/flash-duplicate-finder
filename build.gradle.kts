@@ -39,7 +39,7 @@ dependencies {
     // Use the Kotlin JDK 8 standard library.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    api( "commons-io:commons-io:2.15.1")
+    api( "commons-io:commons-io:2.17.0")
     api( "commons-cli:commons-cli:1.6.0")
     api( "commons-codec:commons-codec:1.16.0")
 
