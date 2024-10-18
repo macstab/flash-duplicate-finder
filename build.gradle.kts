@@ -18,7 +18,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.9.22"
     id("com.diffplug.spotless") version "6.25.0"
     id("org.graalvm.buildtools.native") version "0.9.28"
-    id("com.google.cloud.tools.jib") version "3.4.0"
+    id("com.google.cloud.tools.jib") version "3.4.4"
     // Apply the application plugin to add support for building a CLI application.
     application
 }
